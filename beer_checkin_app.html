@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🍺 クラフトビール チェックイン</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --amber: #D4860A;
+    --amber-light: #F5A623;
+    --amber-dark: #8B5A02;
+    --foam: #FDF3DC;
+    --dark: #0F0A04;
+    --dark-panel: #241A0C;
+    --text: #E8D5A3;
+    --text-dim: #8A7355;
+    --green: #4CAF50;
+    --green-dark: #2e7d32;
+    --blue: #4FC3F7;
+    --red: #EF5350;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--dark); color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 100; opacity: 0.4;
+  }
+
+  header {
+    width: 100%; padding: 22px 20px 12px; text-align: center;
+    border-bottom: 1px solid rgba(212,134,10,0.2);
+    background: linear-gradient(180deg, rgba(212,134,10,0.08) 0%, transparent 100%);
+  }
+  .logo { font-family: 'Playfair Display', serif; font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--amber); margin-bottom: 4px; }
+  .app-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; color: var(--foam); }
+
+  .main { width: 100%; max-width: 420px; padding: 20px 16px; flex: 1; }
+
+  .month-card {
+    background: var(--dark-panel); border: 1px solid rgba(212,134,10,0.25);
+    border-radius: 16px; padding: 18px; margin-bottom: 16px;
+    position: relative; overflow: hidden;
+  }
+  .month-card::before {
+    content: ''; position: absolute; top: 0; right: 0; width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(212,134,10,0.12) 0%, transparent 70%);
+    border-radius: 50%; transform: translate(40px,-40px);
+  }
+  .month-label { font-size: 10px; letter-spacing: 0.2em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px; }
+  .month-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--foam); margin-bottom: 12px; }
+  .stats-row { display: flex; gap: 20px; }
+  .stat-num { font-size: 40px; font-weight: 700; line-height: 1; color: var(--amber-light); }
+  .stat-label { font-size: 10px; color: var(--text-dim); margin-top: 3px; }
+
+  .card { background: var(--dark-panel); border: 1px solid rgba(212,134,10,0.2); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+  .section-label { font-size: 10px; letter-spacing: 0.2em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 14px; }
+
+  .status-strip {
+    background: rgba(255,255,255,0.04); border-radius: 10px;
+    padding: 10px 14px; margin-bottom: 14px;
+    font-size: 12px; color: var(--text-dim);
+    display: flex; align-items: center; gap: 10px; min-height: 40px;
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .status-dot.on  { background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 1.5s infinite; }
+  .status-dot.off { background: var(--text-dim); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+  .btn {
+    width: 100%; border: none; border-radius: 13px;
+    font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 900;
+    padding: 17px; cursor: pointer; position: relative; overflow: hidden;
+    transition: transform 0.12s; margin-bottom: 10px;
+  }
+  .btn:last-child { margin-bottom: 0; }
+  .btn:active { transform: scale(0.97); }
+  .btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%); }
+  .btn-inner { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+  .btn-enter  { background: linear-gradient(135deg, #1a4a1a, var(--green)); color: #fff; box-shadow: 0 4px 18px rgba(76,175,80,0.3); }
+  .btn-exit   { background: linear-gradient(135deg, #4a1a1a, var(--red)); color: #fff; box-shadow: 0 4px 18px rgba(239,83,80,0.3); }
+  .btn-beer   { background: linear-gradient(135deg, var(--amber-dark), var(--amber-light)); color: var(--dark); box-shadow: 0 4px 18px rgba(212,134,10,0.35); }
+  .btn-office { background: linear-gradient(135deg, #1a3a5c, var(--blue)); color: #fff; box-shadow: 0 4px 18px rgba(79,195,247,0.25); }
+  .btn-office.done { background: linear-gradient(135deg, #1a3a1a, var(--green-dark)); box-shadow: 0 4px 18px rgba(76,175,80,0.2); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
+
+  /* ビールメモエリア：入店中のみ表示 */
+  .beer-area {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+    margin-bottom: 0;
+  }
+  .beer-area.visible {
+    max-height: 200px;
+    opacity: 1;
+    margin-bottom: 10px;
+  }
+
+  .memo-row { display: flex; gap: 8px; align-items: flex-start; }
+  .memo-input {
+    flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,134,10,0.25);
+    border-radius: 10px; color: var(--text); font-family: 'Space Mono', monospace;
+    font-size: 13px; padding: 11px 13px; resize: none; outline: none;
+    transition: border-color 0.2s; height: 48px;
+  }
+  .memo-input:focus { border-color: var(--amber); }
+  .memo-input::placeholder { color: var(--text-dim); }
+
+  .btn-memo-send {
+    flex-shrink: 0; width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--amber-dark), var(--amber));
+    border: none; border-radius: 10px; color: var(--dark);
+    font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.12s; position: relative; overflow: hidden;
+  }
+  .btn-memo-send::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%); }
+  .btn-memo-send:active { transform: scale(0.93); }
+  .btn-memo-send span { position: relative; z-index: 1; }
+
+  .memo-hint { font-size: 10px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 0.05em; }
+
+  /* 今日のビールリスト（入店中に表示） */
+  .today-beers { margin-top: 10px; }
+  .today-beer-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+    animation: fadeIn 0.2s ease;
+  }
+  .today-beer-item:last-child { border-bottom: none; }
+  .tb-icon { font-size: 14px; flex-shrink: 0; }
+  .tb-text { font-size: 12px; color: var(--text); flex: 1; }
+  .tb-time { font-size: 10px; color: var(--text-dim); flex-shrink: 0; }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:none} }
+
+  /* History */
+  .history-section { background: var(--dark-panel); border: 1px solid rgba(212,134,10,0.15); border-radius: 16px; padding: 18px; }
+  .history-empty { text-align: center; color: var(--text-dim); font-size: 12px; padding: 24px 0; }
+
+  /* 日付グループ */
+  .h-date-group { margin-bottom: 16px; }
+  .h-date-header {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
+    color: var(--amber); text-transform: uppercase;
+    padding-bottom: 6px; margin-bottom: 6px;
+    border-bottom: 1px solid rgba(212,134,10,0.2);
+  }
+
+  .history-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .history-item:last-child { border-bottom: none; }
+  .h-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .h-dot.enter  { background: var(--green); }
+  .h-dot.exit   { background: var(--red); }
+  .h-dot.beer   { background: var(--amber); }
+  .h-dot.office { background: var(--blue); }
+  .h-main { flex: 1; }
+  .h-title { font-size: 11px; font-weight: 700; }
+  .h-title.enter  { color: var(--green); }
+  .h-title.exit   { color: var(--red); }
+  .h-title.beer   { color: var(--amber); }
+  .h-title.office { color: var(--blue); }
+  .h-sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .h-time { font-size: 10px; color: var(--text-dim); flex-shrink: 0; margin-top: 2px; }
+
+  .settings-card { background: var(--dark-panel); border: 1px solid rgba(212,134,10,0.15); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+  .gas-url-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,134,10,0.2); border-radius: 8px; color: var(--text); font-family: 'Space Mono', monospace; font-size: 11px; padding: 8px 12px; margin-top: 6px; margin-bottom: 10px; outline: none; }
+  .gas-url-input::placeholder { color: var(--text-dim); font-size: 10px; }
+  .save-btn { width: 100%; background: rgba(212,134,10,0.15); border: 1px solid rgba(212,134,10,0.4); border-radius: 10px; color: var(--amber-light); font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; padding: 10px; cursor: pointer; }
+  .connected-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(76,175,80,0.15); border: 1px solid rgba(76,175,80,0.4); border-radius: 100px; padding: 3px 9px; font-size: 10px; color: var(--green); margin-left: 8px; }
+  .dot-green { width: 5px; height: 5px; background: var(--green); border-radius: 50%; }
+
+  .tabs { display: flex; gap: 4px; background: rgba(255,255,255,0.04); border-radius: 12px; padding: 4px; margin-bottom: 18px; }
+  .tab { flex: 1; background: none; border: none; color: var(--text-dim); font-family: 'Space Mono', monospace; font-size: 11px; padding: 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+  .tab.active { background: var(--dark-panel); color: var(--amber-light); border: 1px solid rgba(212,134,10,0.3); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--dark-panel); border: 1px solid var(--amber); border-radius: 100px; padding: 11px 22px; font-size: 13px; color: var(--foam); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); z-index: 200; white-space: nowrap; box-shadow: 0 8px 28px rgba(0,0,0,0.5); }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  footer { width: 100%; text-align: center; padding: 14px; font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Craft Beer</div>
+  <div class="app-title">🍺 チェックイン</div>
+</header>
+
+<div class="main">
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('home')">ホーム</button>
+    <button class="tab" onclick="switchTab('history')">履歴</button>
+    <button class="tab" onclick="switchTab('settings')">設定</button>
+  </div>
+
+  <!-- HOME -->
+  <div id="panel-home" class="panel active">
+
+    <div class="month-card">
+      <div class="month-label">今月の記録</div>
+      <div class="month-title" id="month-title"></div>
+      <div class="stats-row">
+        <div>
+          <div class="stat-num" id="count-visits">0</div>
+          <div class="stat-label">🍺 今月の訪問</div>
+        </div>
+        <div>
+          <div class="stat-num" id="count-total">0</div>
+          <div class="stat-label">📊 累計訪問</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- お店 -->
+    <div class="card">
+      <div class="section-label">🏪 お店</div>
+      <div class="status-strip">
+        <div class="status-dot off" id="shop-dot"></div>
+        <span id="shop-status">まだ入店していません</span>
+      </div>
+
+      <button class="btn btn-enter" id="btn-enter" onclick="doEnter()">
+        <div class="btn-inner"><span>🚪</span><span>入店する</span></div>
+      </button>
+
+      <!-- 入店中のみ表示：ビールメモ -->
+      <div class="beer-area" id="beer-area">
+        <div class="memo-hint">🍺 飲んだビールをその都度メモ</div>
+        <div class="memo-row">
+          <textarea class="memo-input" id="memo" rows="1"
+            placeholder="例: インペリアルIPA、フルーティで◎"></textarea>
+          <button class="btn-memo-send" onclick="doBeerMemo()">
+            <span>📝</span>
+          </button>
+        </div>
+        <div class="today-beers" id="today-beers"></div>
+      </div>
+
+      <button class="btn btn-exit" id="btn-exit" onclick="doExit()" disabled>
+        <div class="btn-inner"><span>🚶</span><span>退店する</span></div>
+      </button>
+    </div>
+
+    <!-- 会社 -->
+    <div class="card">
+      <div class="section-label">🏢 会社</div>
+      <div class="status-strip">
+        <div class="status-dot off" id="office-dot"></div>
+        <span id="office-status">本日の退社未記録</span>
+      </div>
+      <button class="btn btn-office" id="btn-office" onclick="doOffice()">
+        <div class="btn-inner"><span>🚪</span><span id="office-label">退社する</span></div>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- HISTORY -->
+  <div id="panel-history" class="panel">
+    <div class="history-section">
+      <div class="section-label">今月の履歴</div>
+      <div id="history-list"><div class="history-empty">まだ記録がありません</div></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="panel-settings" class="panel">
+    <div class="settings-card">
+      <div class="section-label">Googleカレンダー連携（任意）</div>
+      <div style="font-size:12px; color:var(--text); margin-bottom:4px;">
+        Apps Script URL
+        <span id="connected-badge" style="display:none" class="connected-badge">
+          <span class="dot-green"></span>接続済
+        </span>
+      </div>
+      <input type="url" class="gas-url-input" id="gas-url"
+        placeholder="https://script.google.com/macros/s/xxxx/exec">
+      <button class="save-btn" onclick="saveSettings()">💾 設定を保存</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+<footer>CRAFT BEER TRACKER v1.5</footer>
+
+<script>
+var KEY = 'beer_tracker_v1';
+
+function load()  { var r=localStorage.getItem(KEY); if(!r) return {records:[],gasUrl:''}; try{return JSON.parse(r);}catch(e){return {records:[],gasUrl:''};} }
+function save(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
+function pad(n)  { return String(n).padStart(2,'0'); }
+function hm(ts)  { var d=new Date(ts); return pad(d.getHours())+':'+pad(d.getMinutes()); }
+function today() { return new Date().toISOString().slice(0,10); }
+function getYM() { var d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1); }
+function monthRecs() { var ym=getYM(); return load().records.filter(function(r){ return r.date.startsWith(ym); }); }
+
+function isInShop() {
+  var state = load();
+  var td = today();
+  var todayRecs = state.records.filter(function(r){ return r.date===td; });
+  var enters = todayRecs.filter(function(r){ return r.type==='enter'; });
+  var exits   = todayRecs.filter(function(r){ return r.type==='exit'; });
+  var lastEnter = enters.length ? enters[enters.length-1] : null;
+  var lastExit  = exits.length  ? exits[exits.length-1]   : null;
+  return lastEnter && (!lastExit || new Date(lastEnter.ts) > new Date(lastExit.ts));
+}
+
+function updateTodayBeers() {
+  var state = load();
+  var td = today();
+  var beers = state.records.filter(function(r){ return r.type==='beer' && r.date===td && r.memo; });
+  var el = document.getElementById('today-beers');
+  if (!beers.length) { el.innerHTML = ''; return; }
+  el.innerHTML = beers.map(function(r){
+    return '<div class="today-beer-item">'+
+      '<span class="tb-icon">🍺</span>'+
+      '<span class="tb-text">'+r.memo+'</span>'+
+      '<span class="tb-time">'+hm(r.ts)+'</span>'+
+    '</div>';
+  }).join('');
+}
+
+function updateUI() {
+  var state = load();
+  var mr = monthRecs();
+  var td = today();
+  var todayRecs = state.records.filter(function(r){ return r.date===td; });
+
+  var visits = mr.filter(function(r){ return r.type==='exit'; }).length;
+  var totalVisits = state.records.filter(function(r){ return r.type==='exit'; }).length;
+
+  var d = new Date();
+  document.getElementById('month-title').textContent = d.getFullYear()+'年'+(d.getMonth()+1)+'月';
+  document.getElementById('count-visits').textContent = visits;
+  document.getElementById('count-total').textContent = totalVisits;
+
+  // Shop state
+  var enters = todayRecs.filter(function(r){ return r.type==='enter'; });
+  var exits   = todayRecs.filter(function(r){ return r.type==='exit'; });
+  var lastEnter = enters.length ? enters[enters.length-1] : null;
+  var lastExit  = exits.length  ? exits[exits.length-1]   : null;
+  var inShop = lastEnter && (!lastExit || new Date(lastEnter.ts) > new Date(lastExit.ts));
+
+  var shopDot  = document.getElementById('shop-dot');
+  var shopStat = document.getElementById('shop-status');
+  var btnEnter = document.getElementById('btn-enter');
+  var btnExit  = document.getElementById('btn-exit');
+  var beerArea = document.getElementById('beer-area');
+
+  if (inShop) {
+    shopDot.className = 'status-dot on';
+    shopStat.textContent = '入店中  '+ hm(lastEnter.ts) +'〜';
+    btnEnter.disabled = true;
+    btnExit.disabled  = false;
+    beerArea.classList.add('visible');
+    updateTodayBeers();
+  } else if (lastExit) {
+    var stayMin = lastEnter ? Math.round((new Date(lastExit.ts)-new Date(lastEnter.ts))/60000) : null;
+    shopDot.className = 'status-dot off';
+    shopStat.textContent = '退店済み '+ hm(lastExit.ts) + (stayMin!=null ? '（滞在'+stayMin+'分）' : '');
+    btnEnter.disabled = false;
+    btnExit.disabled  = true;
+    beerArea.classList.remove('visible');
+  } else {
+    shopDot.className = 'status-dot off';
+    shopStat.textContent = 'まだ入店していません';
+    btnEnter.disabled = false;
+    btnExit.disabled  = true;
+    beerArea.classList.remove('visible');
+  }
+
+  // Office state
+  var officeRec = todayRecs.find(function(r){ return r.type==='office'; });
+  var officeBtn = document.getElementById('btn-office');
+  if (officeRec) {
+    document.getElementById('office-dot').className = 'status-dot off';
+    document.getElementById('office-status').textContent = '退社済み  '+ hm(officeRec.ts);
+    officeBtn.classList.add('done');
+    officeBtn.disabled = true;
+    document.getElementById('office-label').textContent = '退社済み ✓';
+  } else {
+    document.getElementById('office-dot').className = 'status-dot off';
+    document.getElementById('office-status').textContent = '本日の退社未記録';
+    officeBtn.classList.remove('done');
+    officeBtn.disabled = false;
+    document.getElementById('office-label').textContent = '退社する';
+  }
+
+  // History（日付ごとにグループ化）
+  var histEl = document.getElementById('history-list');
+  var recs = mr.slice().reverse();
+  if (!recs.length) { histEl.innerHTML='<div class="history-empty">まだ記録がありません</div>'; return; }
+
+  var days = ['日','月','火','水','木','金','土'];
+  var groups = {};
+  var groupOrder = [];
+  recs.forEach(function(r){
+    if (!groups[r.date]) { groups[r.date]=[]; groupOrder.push(r.date); }
+    groups[r.date].push(r);
+  });
+
+  histEl.innerHTML = groupOrder.map(function(date){
+    var dt = new Date(date+'T00:00:00');
+    var dateLabel = (dt.getMonth()+1)+'/'+dt.getDate()+'（'+days[dt.getDay()]+'）';
+    var items = groups[date].map(function(r){
+      var icon  = {enter:'🚪', exit:'🚶', beer:'🍺', office:'🏢'}[r.type]||'';
+      var label = {enter:'入店', exit:'退店', beer:'ビール', office:'退社'}[r.type]||r.type;
+      var sub = '';
+      if (r.type==='exit' && r.stayMin!=null) sub = '滞在 '+r.stayMin+'分';
+      if (r.type==='beer' && r.memo) sub = r.memo;
+      return '<div class="history-item">'+
+        '<div class="h-dot '+r.type+'"></div>'+
+        '<div class="h-main">'+
+          '<div class="h-title '+r.type+'">'+icon+' '+label+'</div>'+
+          (sub ? '<div class="h-sub">'+sub+'</div>' : '')+
+        '</div>'+
+        '<div class="h-time">'+hm(r.ts)+'</div>'+
+      '</div>';
+    }).join('');
+    return '<div class="h-date-group">'+
+      '<div class="h-date-header">'+dateLabel+'</div>'+
+      items+
+    '</div>';
+  }).join('');
+
+  document.getElementById('gas-url').value = state.gasUrl||'';
+  document.getElementById('connected-badge').style.display = state.gasUrl ? 'inline-flex' : 'none';
+}
+
+function push(rec) { var s=load(); s.records.push(rec); save(s); }
+
+function sendGas(payload) {
+  var url = load().gasUrl;
+  if (!url) return;
+  fetch(url, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }).catch(function(){});
+}
+
+function doEnter() {
+  var now = new Date();
+  push({ type:'enter', ts:now.toISOString(), date:today() });
+  updateUI(); showToast('🚪 入店を記録しました');
+  sendGas({ type:'enter', timestamp:now.toISOString() });
+}
+
+function doExit() {
+  var state = load();
+  var now = new Date();
+  var td = today();
+  var enters = state.records.filter(function(r){ return r.type==='enter' && r.date===td; });
+  var lastEnter = enters.length ? enters[enters.length-1] : null;
+  var stayMin = lastEnter ? Math.round((now-new Date(lastEnter.ts))/60000) : null;
+  push({ type:'exit', ts:now.toISOString(), date:td, stayMin:stayMin });
+  updateUI();
+  showToast(stayMin!=null ? '🚶 退店（滞在 '+stayMin+'分）' : '🚶 退店を記録しました');
+  sendGas({ type:'exit', timestamp:now.toISOString(), stayMin:stayMin });
+}
+
+function doBeerMemo() {
+  var memo = document.getElementById('memo').value.trim();
+  if (!memo) { showToast('メモを入力してください'); return; }
+  if (!isInShop()) { showToast('入店中のみ記録できます'); return; }
+  var now = new Date();
+  push({ type:'beer', ts:now.toISOString(), date:today(), memo:memo });
+  document.getElementById('memo').value = '';
+  updateTodayBeers();
+  showToast('🍺 メモしました！');
+  sendGas({ type:'beer', timestamp:now.toISOString(), memo:memo });
+}
+
+function doOffice() {
+  var now = new Date();
+  push({ type:'office', ts:now.toISOString(), date:today() });
+  updateUI(); showToast('🏢 退社時刻を記録しました');
+  sendGas({ type:'office', timestamp:now.toISOString() });
+}
+
+function saveSettings() {
+  var s = load(); s.gasUrl = document.getElementById('gas-url').value.trim(); save(s);
+  updateUI(); showToast('✓ 設定を保存しました');
+}
+
+// Enterキーでメモ送信
+document.getElementById('memo').addEventListener('keydown', function(e){
+  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); doBeerMemo(); }
+});
+
+var toastTimer;
+function showToast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2600);
+}
+
+function switchTab(tab) {
+  var names=['home','history','settings'];
+  document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('active',names[i]===tab); });
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('panel-'+tab).classList.add('active');
+}
+
+updateUI();
+</script>
+</body>
+</html>
