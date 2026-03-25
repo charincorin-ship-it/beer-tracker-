@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -943,6 +943,15 @@ function openBeerEditModal(ts){
   var rec=state.records.find(function(r){ return r.ts===ts && r.type==='beer'; });
   if(!rec) return;
   var bd=getBeerData(rec);
+  /* 前回の残骸をリセットしてから流し込む */
+  document.getElementById('edit-ts').value='';
+  document.getElementById('edit-beer-name').value='';
+  document.getElementById('edit-beer-comment').value='';
+  document.getElementById('edit-beer-url').value='';
+  document.getElementById('edit-beer-photo').value='';
+  _editRating=0;
+  setEditRating(0);
+  /* 対象データをセット */
   document.getElementById('edit-ts').value=ts;
   document.getElementById('edit-beer-name').value=bd.name;
   document.getElementById('edit-beer-comment').value=bd.comment;
@@ -996,6 +1005,11 @@ function openNoteEditModal(ts){
   if(!rec) return;
   var noteText = rec.noteData ? rec.noteData.text : (rec.memo||'');
   var notePhoto = rec.noteData ? (rec.noteData.photo||'') : '';
+  /* 前回の残骸をリセットしてから流し込む */
+  document.getElementById('note-edit-ts').value='';
+  document.getElementById('edit-note-text').value='';
+  document.getElementById('edit-note-photo').value='';
+  /* 対象データをセット */
   document.getElementById('note-edit-ts').value=ts;
   document.getElementById('edit-note-text').value=noteText;
   document.getElementById('edit-note-photo').value=notePhoto;
