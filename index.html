@@ -59,7 +59,7 @@
   .btn-disabled{opacity:0.32;cursor:not-allowed;}
   .beer-area{overflow:hidden;max-height:0;opacity:0;transition:max-height 0.4s ease,opacity 0.3s ease,margin 0.3s ease;margin-bottom:0;}
   .beer-area.visible{max-height:9999px;opacity:1;margin-bottom:10px;}
-
+ 
   /* ── ビール記録ブロック（構造化） ── */
   .beer-block{background:rgba(212,134,10,0.06);border:1px solid rgba(212,134,10,0.2);border-radius:12px;padding:14px;margin-bottom:10px;}
   .beer-block-field{margin-bottom:10px;}
@@ -89,7 +89,7 @@
   .btn-beer-send::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.2) 0%,transparent 50%);}
   .btn-beer-send span{position:relative;z-index:1;}
   .btn-beer-send:active{transform:scale(0.95);}
-
+ 
   /* 今日のビール一覧 */
   .today-beers{margin-top:10px;max-height:none;}
   .today-beer-item{background:rgba(212,134,10,0.06);border:1px solid rgba(212,134,10,0.15);border-radius:10px;padding:10px 12px;margin-bottom:8px;animation:fadeIn 0.2s ease;}
@@ -122,7 +122,7 @@
   .tb-text a{color:var(--amber-light);text-decoration:underline;}
   .tb-icon{font-size:14px;flex-shrink:0;}
   @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-
+ 
   /* ── 確認ダイアログ（インライン） ── */
   .confirm-inline{display:none;background:rgba(212,134,10,0.08);border:1px solid rgba(212,134,10,0.4);border-radius:13px;padding:14px 14px 12px;margin-top:6px;animation:fadeIn 0.15s ease;}
   .confirm-inline.show{display:block;}
@@ -131,7 +131,7 @@
   .confirm-inline-no{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:11px;color:var(--text-dim);font-family:'Playfair Display',serif;font-size:16px;font-weight:900;padding:12px;cursor:pointer;}
   .confirm-inline-yes{flex:1;background:linear-gradient(135deg,var(--amber-dark),var(--amber));border:none;border-radius:11px;color:var(--dark);font-family:'Playfair Display',serif;font-size:16px;font-weight:900;padding:12px;cursor:pointer;}
   .confirm-inline-yes:active,.confirm-inline-no:active{opacity:0.8;}
-
+ 
   /* ── note欄（メモ編集モーダル用） ── */
   .note-block-field{margin-bottom:12px;}
   .note-block-field:last-child{margin-bottom:0;}
@@ -206,7 +206,7 @@
   .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark-panel);border:1px solid var(--amber);border-radius:100px;padding:11px 22px;font-size:13px;color:var(--foam);transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);z-index:200;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,0.5);}
   .toast.show{transform:translateX(-50%) translateY(0);}
   footer{width:100%;text-align:center;padding:14px;font-size:10px;color:var(--text-dim);letter-spacing:0.1em;}
-
+ 
   /* ── 編集モーダル（ビール記録用） ── */
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;align-items:flex-end;justify-content:center;}
   .modal-overlay.show{display:flex;}
@@ -238,7 +238,7 @@
     <button class="tab" onclick="switchTab('history')">履歴</button>
     <button class="tab" onclick="switchTab('settings')">設定</button>
   </div>
-
+ 
   <div id="panel-home" class="panel active">
     <div class="month-card">
       <div class="month-label">今月の記録</div>
@@ -253,7 +253,7 @@
         <div class="mini-cal" id="mini-cal"></div>
       </div>
     </div>
-
+ 
     <div class="card">
       <div class="section-label">🏪 お店</div>
       <div class="status-strip">
@@ -264,7 +264,7 @@
         <div class="btn-inner"><span>🚪</span><span>入店する</span></div>
       </button>
       <div id="enter-lock-msg" style="display:none;font-size:10px;color:var(--text-dim);text-align:center;margin-top:-4px;margin-bottom:10px;letter-spacing:0.03em;">本日は入退店済みです（設定からリセット可能）</div>
-
+ 
       <!-- ビール記録エリア -->
       <div class="beer-area" id="beer-area">
         <div class="beer-block">
@@ -302,7 +302,7 @@
         </div>
         <div class="today-beers" id="today-beers"></div>
       </div>
-
+ 
       <button class="btn btn-exit btn-disabled" id="btn-exit" onclick="onExitClick()">
         <div class="btn-inner"><span>🚶</span><span>退店する</span></div>
       </button>
@@ -314,7 +314,7 @@
         </div>
       </div>
     </div>
-
+ 
     <div class="card">
       <div class="section-label">🏢 会社</div>
       <div class="status-strip">
@@ -333,14 +333,14 @@
       </div>
     </div>
   </div>
-
+ 
   <div id="panel-history" class="panel">
     <div class="history-section">
       <div class="section-label">今月の履歴</div>
       <div id="history-list"><div class="history-empty">まだ記録がありません</div></div>
     </div>
   </div>
-
+ 
   <div id="panel-settings" class="panel">
     <div class="settings-card">
       <div class="section-label">Googleカレンダー連携（任意）</div>
@@ -372,7 +372,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- ビール編集モーダル -->
 <div class="modal-overlay" id="beer-edit-modal" onclick="closeBeerEditModal(event)">
   <div class="modal-sheet">
@@ -411,7 +411,7 @@
     <button class="modal-save-btn" onclick="saveBeerEdit()">💾 保存する</button>
   </div>
 </div>
-
+ 
 <!-- noteメモ編集モーダル -->
 <div class="modal-overlay" id="note-edit-modal" onclick="closeNoteEditModal(event)">
   <div class="modal-sheet">
@@ -432,10 +432,10 @@
     <button class="modal-save-btn modal-save-btn--note" onclick="saveNoteEdit()">💾 保存する</button>
   </div>
 </div>
-
+ 
 <div class="toast" id="toast"></div>
 <footer>CRAFT BEER TRACKER v2.2</footer>
-
+ 
 <script>
 /* ============================================================
    ストレージ
@@ -450,7 +450,7 @@ function _set(k,v){ if(_useMem){ _mem[k]=v; } else { localStorage.setItem(k,v); 
 function load(){ var r=_get(KEY); if(!r) return {records:[],gasUrl:''}; try{ return JSON.parse(r); }catch(e){ return {records:[],gasUrl:''}; } }
 function save(s){ _set(KEY, JSON.stringify(s)); }
 function push(rec){ var s=load(); s.records.push(rec); save(s); }
-
+ 
 /* ============================================================
    日時ユーティリティ
    ============================================================ */
@@ -459,7 +459,7 @@ function todayJST(){ var d=nowJST(); return d.getFullYear()+'-'+pad(d.getMonth()
 function getYMJST(){ var d=nowJST(); return d.getFullYear()+'-'+pad(d.getMonth()+1); }
 function pad(n){ return String(n).padStart(2,'0'); }
 function hm(ts){ var d=new Date(ts); var j=new Date(d.getTime()+(d.getTimezoneOffset()+540)*60000); return pad(j.getHours())+':'+pad(j.getMinutes()); }
-
+ 
 /* ============================================================
    HTML エスケープ・linkify
    ============================================================ */
@@ -494,7 +494,7 @@ function linkifyNl(text){
   if(!text) return '';
   return linkify(text).replace(/\n/g,'<br>');
 }
-
+ 
 /* ============================================================
    後方互換：beerレコードのmemo解釈
    ============================================================ */
@@ -515,7 +515,7 @@ function renderStars(rating){
   for(var i=1;i<=5;i++) s += (i<=rating ? '★' : '☆');
   return s;
 }
-
+ 
 /* ============================================================
    星評価（入力）
    ============================================================ */
@@ -533,7 +533,7 @@ function setEditRating(val){
     s.classList.toggle('filled', parseInt(s.dataset.val) <= val);
   });
 }
-
+ 
 /* ============================================================
    textarea 自動伸長（イベント委譲）
    ============================================================ */
@@ -552,12 +552,12 @@ function initAutoResize(){
     autoResize(el);
   });
 }
-
+ 
 /* ============================================================
    状態判定
    ============================================================ */
 function monthRecs(){ var ym=getYMJST(); return load().records.filter(function(r){ return r.date && r.date.startsWith(ym); }); }
-
+ 
 function isInShop(){
   var s=load(); var td=todayJST();
   var tr=s.records.filter(function(r){ return r.date===td; });
@@ -567,12 +567,12 @@ function isInShop(){
   var lx=exits.length ? exits[exits.length-1] : null;
   return !!(le && (!lx || new Date(le.ts) > new Date(lx.ts)));
 }
-
+ 
 function hasTodayExit(){
   var td=todayJST();
   return load().records.some(function(r){ return r.type==='exit' && r.date===td; });
 }
-
+ 
 /* ============================================================
    確認ダイアログ（退店・退社・リセット）
    ============================================================ */
@@ -581,13 +581,13 @@ function onExitClick(){
   document.getElementById('confirm-exit').classList.toggle('show');
 }
 function closeExitConfirm(){ document.getElementById('confirm-exit').classList.remove('show'); }
-
+ 
 function onOfficeClick(){
   if(document.getElementById('btn-office').classList.contains('btn-disabled')) return;
   document.getElementById('confirm-office').classList.toggle('show');
 }
 function closeOfficeConfirm(){ document.getElementById('confirm-office').classList.remove('show'); }
-
+ 
 /* ============================================================
    ── 削除ボタン 2段階確認ロジック ──
    
@@ -599,7 +599,7 @@ function closeOfficeConfirm(){ document.getElementById('confirm-office').classLi
    ============================================================ */
 var _delTimer = null;        /* タイマーID */
 var _delPendingBtn = null;   /* 現在pending中のボタン要素 */
-
+ 
 /* pending状態を解除してボタンを元に戻す */
 function _resetDelPending(){
   if(_delTimer){ clearTimeout(_delTimer); _delTimer=null; }
@@ -609,7 +609,7 @@ function _resetDelPending(){
     _delPendingBtn = null;
   }
 }
-
+ 
 /* ドキュメント全体のクリックを監視してpendingをキャンセル */
 document.addEventListener('click', function(e){
   if(!_delPendingBtn) return;
@@ -617,7 +617,7 @@ document.addEventListener('click', function(e){
   if(e.target === _delPendingBtn) return;
   _resetDelPending();
 }, true); /* capture=true で他のクリックより先に捕捉 */
-
+ 
 /**
  * 削除ボタンの共通ハンドラ
  * @param {HTMLElement} btn - クリックされたボタン要素
@@ -643,7 +643,7 @@ function _handleDelClick(btn, doDelete, confirmLabel){
     }, 3000);
   }
 }
-
+ 
 /* ============================================================
    カレンダー描画
    ============================================================ */
@@ -671,7 +671,7 @@ function renderCalendar(){
   html+='</div>';
   document.getElementById('mini-cal').innerHTML=html;
 }
-
+ 
 /* ============================================================
    本日のビール一覧（ホーム画面）
    ============================================================ */
@@ -702,7 +702,7 @@ function updateTodayBeers(){
   }).join('');
   el.scrollTop=el.scrollHeight;
 }
-
+ 
 /* ホーム画面の削除ボタン（tb-del） */
 function delBeerMemo(btn, ts){
   _handleDelClick(btn, function(){
@@ -713,36 +713,36 @@ function delBeerMemo(btn, ts){
     save(state); updateTodayBeers(); updateUI(); showToast('🗑️ メモを削除しました');
   }, '本当に削除？');
 }
-
+ 
 /* ============================================================
    メイン UI 更新
    ============================================================ */
 function updateUI(){
   var state=load(); var mr=monthRecs(); var td=todayJST();
   var tr=state.records.filter(function(r){ return r.date===td; });
-
+ 
   var visits = mr.filter(function(r){ return r.type==='exit'; }).length;
   var total  = state.records.filter(function(r){ return r.type==='exit'; }).length;
-
+ 
   var d=nowJST();
   document.getElementById('month-title').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月';
   document.getElementById('count-visits').textContent=visits;
   document.getElementById('count-total').textContent=total;
   renderCalendar();
-
+ 
   var enters=tr.filter(function(r){ return r.type==='enter'; });
   var exits =tr.filter(function(r){ return r.type==='exit';  });
   var lastEnter=enters.length ? enters[enters.length-1] : null;
   var lastExit =exits.length  ? exits[exits.length-1]   : null;
   var inShop=!!(lastEnter && (!lastExit || new Date(lastEnter.ts)>new Date(lastExit.ts)));
   var todayExited = hasTodayExit();
-
+ 
   var shopDot  =document.getElementById('shop-dot');
   var shopStat =document.getElementById('shop-status');
   var btnEnter =document.getElementById('btn-enter');
   var btnExit  =document.getElementById('btn-exit');
   var beerArea =document.getElementById('beer-area');
-
+ 
   var lockMsg=document.getElementById('enter-lock-msg');
   if(inShop){
     shopDot.className='status-dot on';
@@ -771,7 +771,7 @@ function updateUI(){
     closeExitConfirm();
     beerArea.classList.remove('visible');
   }
-
+ 
   var officeRec=tr.find(function(r){ return r.type==='office'; });
   var officeBtn=document.getElementById('btn-office');
   if(officeRec){
@@ -786,12 +786,12 @@ function updateUI(){
     officeBtn.classList.remove('done','btn-disabled');
     document.getElementById('office-label').textContent='退社する';
   }
-
+ 
   renderHistory(mr);
   document.getElementById('gas-url').value=state.gasUrl||'';
   document.getElementById('connected-badge').style.display=state.gasUrl ? 'inline-flex' : 'none';
 }
-
+ 
 /* ============================================================
    履歴描画
    ============================================================ */
@@ -810,10 +810,10 @@ function renderHistory(mr){
     var dateLabel=(dt.getMonth()+1)+'/'+dt.getDate()+'（'+dayNames[dt.getDay()]+'）';
     var hasEnter=groups[date].some(function(r){ return r.type==='enter'; });
     var beerCount=groups[date].filter(function(r){ return r.type==='beer'; }).length;
-
+ 
     var items=groups[date].map(function(r){
       var tsE=r.ts.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-
+ 
       /* note型 */
       if(r.type==='note'){
         var noteText = r.noteData ? r.noteData.text : (r.memo||'');
@@ -833,7 +833,7 @@ function renderHistory(mr){
           +'<button class="h-act-btn del" onclick="delMemo(this,\''+tsE+'\',\'note\')">削除</button>'
           +'</div></div></div>';
       }
-
+ 
       /* beer型 */
       if(r.type==='beer'){
         var bd=getBeerData(r);
@@ -859,7 +859,7 @@ function renderHistory(mr){
           +'<div class="h-time">'+hm(r.ts)+'</div>'
           +'</div>';
       }
-
+ 
       /* enter/exit/office */
       var icon ={enter:'🚪',exit:'🚶',office:'🏢'}[r.type]||'';
       var label={enter:'入店',exit:'退店',office:'退社'}[r.type]||r.type;
@@ -875,7 +875,7 @@ function renderHistory(mr){
         +'<div class="h-time">'+hm(r.ts)+'</div>'
         +'</div>';
     }).join('');
-
+ 
     var addArea = hasEnter
       ? '<div class="h-add-area">'
         +'<textarea class="h-add-input auto-textarea" placeholder="メモを入力..." data-date="'+date+'"></textarea>'
@@ -884,15 +884,15 @@ function renderHistory(mr){
         +'<button class="h-add-btn note" onclick="histAdd(\''+date+'\',this,\'note\')">📝 メモとして追加</button>'
         +'</div></div>'
       : '';
-
+ 
     return '<div class="h-date-group"><div class="h-date-header">'+dateLabel+'</div>'+items+addArea+'</div>';
   }).join('');
-
+ 
   document.querySelectorAll('.h-add-input').forEach(function(el){
     el.addEventListener('input',function(){ autoResize(this); });
   });
 }
-
+ 
 /* ============================================================
    履歴の削除（2段階確認）
    ============================================================ */
@@ -905,7 +905,7 @@ function delMemo(btn, ts, type){
     save(state); updateUI(); showToast('🗑️ 削除しました');
   }, '本当に削除？');
 }
-
+ 
 /* ============================================================
    履歴からメモ追加
    ============================================================ */
@@ -925,6 +925,10 @@ function histAdd(date, btn, type){
   } else {
     pseudoTs=new Date(date+'T03:00:00.000Z').toISOString();
   }
+  /* 同じtsが既に存在する場合は1msずつずらしてユニークにする */
+  while(state.records.some(function(r){ return r.ts===pseudoTs; })){
+    pseudoTs=new Date(new Date(pseudoTs).getTime()+1).toISOString();
+  }
   if(type==='beer'){
     push({type:'beer', ts:pseudoTs, date:date, beerData:{name:memo, rating:0, comment:'', url:'', photo:''}});
   } else {
@@ -934,7 +938,7 @@ function histAdd(date, btn, type){
   updateUI();
   showToast(type==='beer' ? '🍺 ビールメモを追加しました' : '✏️ メモを追加しました');
 }
-
+ 
 /* ============================================================
    ビール編集モーダル
    ============================================================ */
@@ -995,7 +999,7 @@ function saveBeerEdit(){
   var name=document.getElementById('edit-beer-name').value.trim();
   sendGas({type:'beer_edit',timestamp:new Date().toISOString(),beerData:{name:name,rating:_editRating}});
 }
-
+ 
 /* ============================================================
    メモ編集モーダル
    ============================================================ */
@@ -1043,7 +1047,7 @@ function saveNoteEdit(){
   updateUI();
   showToast('✏️ メモを編集しました');
 }
-
+ 
 /* ============================================================
    アクション
    ============================================================ */
@@ -1057,7 +1061,7 @@ function sendGas(payload){
       .catch(function(e){ console.error('[GAS] no-cors also failed:', e); });
   });
 }
-
+ 
 function doEnter(){
   if(document.getElementById('btn-enter').classList.contains('btn-disabled')){ showToast('本日はすでに入退店済みです'); return; }
   var now=new Date();
@@ -1066,7 +1070,7 @@ function doEnter(){
   sendGas({type:'enter',timestamp:now.toISOString()});
   setTimeout(function(){ document.getElementById('beer-name').focus(); },50);
 }
-
+ 
 function doExitConfirmed(){
   closeExitConfirm();
   var state=load(); var now=new Date(); var td=todayJST();
@@ -1078,7 +1082,7 @@ function doExitConfirmed(){
   showToast(stayMin!=null ? '🚶 退店（滞在 '+stayMin+'分）' : '🚶 退店しました');
   sendGas({type:'exit',timestamp:now.toISOString(),stayMin:stayMin});
 }
-
+ 
 function doOfficeConfirmed(){
   closeOfficeConfirm();
   var now=new Date();
@@ -1086,7 +1090,7 @@ function doOfficeConfirmed(){
   updateUI(); showToast('🏢 退社時刻を記録しました');
   sendGas({type:'office',timestamp:now.toISOString()});
 }
-
+ 
 function doBeerMemo(){
   var name=document.getElementById('beer-name').value.trim();
   var comment=document.getElementById('beer-comment').value;
@@ -1109,7 +1113,7 @@ function doBeerMemo(){
   updateTodayBeers(); updateUI(); showToast('🍺 記録しました！');
   sendGas({type:'beer',timestamp:now.toISOString(),beerData:{name:name,rating:rating}});
 }
-
+ 
 /* ============================================================
    退店リセット（設定タブ）
    ============================================================ */
@@ -1127,7 +1131,7 @@ function doResetExitConfirmed(){
   state.records=state.records.filter(function(r){ return !(r.date===td && (r.type==='exit' || r.type==='enter')); });
   save(state); updateUI(); showToast('🔄 退店ステータスをリセットしました');
 }
-
+ 
 /* ============================================================
    キーボード
    ============================================================ */
@@ -1135,7 +1139,7 @@ function doResetExitConfirmed(){
   var el=document.getElementById(id);
   if(el) el.addEventListener('keydown',function(e){ if(e.key==='Enter') e.stopPropagation(); });
 });
-
+ 
 /* ============================================================
    設定・データ管理
    ============================================================ */
@@ -1143,7 +1147,7 @@ function saveSettings(){
   var s=load(); s.gasUrl=document.getElementById('gas-url').value.trim();
   save(s); updateUI(); showToast('✓ 設定を保存しました');
 }
-
+ 
 function exportData(){
   var state=load();
   var blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
@@ -1151,7 +1155,7 @@ function exportData(){
   a.href=url; a.download='beer_tracker_backup_'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'.json';
   a.click(); URL.revokeObjectURL(url); showToast('⬇️ バックアップを保存しました');
 }
-
+ 
 function importData(e){
   var file=e.target.files[0]; if(!file) return;
   var reader=new FileReader();
@@ -1165,7 +1169,7 @@ function importData(e){
   };
   reader.readAsText(file);
 }
-
+ 
 /* ============================================================
    トースト・タブ
    ============================================================ */
@@ -1176,7 +1180,7 @@ function showToast(msg){
   clearTimeout(_toastTimer);
   _toastTimer=setTimeout(function(){ el.classList.remove('show'); },2600);
 }
-
+ 
 function switchTab(tab){
   var names=['home','history','settings'];
   document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('active',names[i]===tab); });
@@ -1185,9 +1189,26 @@ function switchTab(tab){
   /* タブ切替時にpending中の削除をキャンセル */
   _resetDelPending();
 }
-
+ 
 /* 初期化 */
 initAutoResize();
+/* 既存データのts重複を修正（histAddで同じpseudoTsが生成されたケースの救済） */
+(function fixDuplicateTs(){
+  var state=load();
+  var seen={};
+  var changed=false;
+  state.records=state.records.map(function(r){
+    var ts=r.ts;
+    while(seen[ts]){
+      ts=new Date(new Date(ts).getTime()+1).toISOString();
+      changed=true;
+    }
+    seen[ts]=true;
+    if(ts!==r.ts){ r=Object.assign({},r,{ts:ts}); }
+    return r;
+  });
+  if(changed){ save(state); }
+})();
 updateUI();
 </script>
 </body>
