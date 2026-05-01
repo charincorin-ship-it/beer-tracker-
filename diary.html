@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#d6cfc4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ひとりごとノート">
+<title>ひとりごとノート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Kurenaido&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #d6cfc4;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 16px 48px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1 {
+    font-family: 'Klee One', cursive;
+    font-size: 1rem;
+    color: #6b5e52;
+    margin-bottom: 22px;
+    letter-spacing: 0.18em;
+    opacity: 0.65;
+  }
+
+  .notebook {
+    background: #faf8f3;
+    width: 100%;
+    max-width: 560px;
+    border-radius: 2px 8px 8px 2px;
+    box-shadow:
+      -6px 0 0 #c9b99a,
+      0 4px 28px rgba(0,0,0,0.2),
+      inset 0 0 0 1px rgba(0,0,0,0.04);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .notebook::before {
+    content: '';
+    position: absolute;
+    left: 36px;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: rgba(210,150,130,0.3);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* ヘッダー */
+  .notebook-header {
+    background: #ede9df;
+    border-bottom: 1.5px solid #c8b89a;
+    padding: 10px 14px 10px 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .date-label {
+    font-family: 'Klee One', cursive;
+    font-size: 0.72rem;
+    color: #9a8878;
+    letter-spacing: 0.08em;
+  }
+
+  input.date-input {
+    font-family: 'Klee One', cursive;
+    font-size: 0.82rem;
+    color: #5c4f44;
+    border: none;
+    background: transparent;
+    border-bottom: 1px solid #c0a88a;
+    outline: none;
+    width: 116px;
+    padding: 1px 4px;
+  }
+
+  /* エントリーエリア */
+  .entries-area {
+    min-height: 260px;
+    max-height: 52vh;
+    overflow-y: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .entries-area::-webkit-scrollbar { width: 4px; }
+  .entries-area::-webkit-scrollbar-track { background: transparent; }
+  .entries-area::-webkit-scrollbar-thumb { background: #c8b89a; border-radius: 2px; }
+
+  /* エントリーブロック */
+  .entry-block {
+    padding: 16px 14px 0 52px;
+    position: relative;
+  }
+
+  .entry-block::after {
+    content: '';
+    display: block;
+    height: 1px;
+    background: #d8cebb;
+    margin-top: 12px;
+  }
+
+  .entry-meta {
+    font-family: 'Klee One', cursive;
+    font-size: 0.63rem;
+    color: #b0a090;
+    margin-bottom: 3px;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 4px;
+  }
+
+  /* 削除ボタン */
+  .delete-btn {
+    font-family: 'Klee One', cursive;
+    font-size: 0.63rem;
+    color: #c0a898;
+    background: transparent;
+    border: none;
+    padding: 2px 4px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .delete-btn:hover { color: #a05040; background: #f0e0d8; }
+
+  /* 削除確認 */
+  .delete-confirm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0 8px 0;
+    padding: 6px 10px;
+    background: #fdf0ec;
+    border: 1px solid #e8c0b0;
+    border-radius: 6px;
+    animation: fadeIn 0.15s ease;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+
+  .delete-confirm span {
+    font-family: 'Klee One', cursive;
+    font-size: 0.75rem;
+    color: #7a5848;
+    flex: 1;
+  }
+
+  .confirm-yes {
+    font-family: 'Klee One', cursive;
+    font-size: 0.72rem;
+    color: #fff;
+    background: #b05040;
+    border: none;
+    border-radius: 10px;
+    padding: 3px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .confirm-yes:hover { background: #8a3830; }
+
+  .confirm-no {
+    font-family: 'Klee One', cursive;
+    font-size: 0.72rem;
+    color: #7a6858;
+    background: #ede0d0;
+    border: none;
+    border-radius: 10px;
+    padding: 3px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .confirm-no:hover { background: #d8c8b8; }
+
+  .entry-text {
+    font-family: 'Klee One', cursive;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #1e1810;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  /* コメント吹き出し */
+  .comment-bubble {
+    display: inline-block;
+    margin: 9px 0 5px 8px;
+    position: relative;
+    font-family: 'Zen Kurenaido', cursive;
+    font-size: 0.9rem;
+    color: #b5252a;
+    background: transparent;
+    border: 2px solid #c93030;
+    border-radius: 48% 52% 46% 54% / 42% 48% 52% 46%;
+    padding: 5px 15px 6px 14px;
+    line-height: 1.5;
+    transform: rotate(-1.5deg);
+    animation: bubbleIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .comment-bubble::before {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: 16px;
+    width: 9px;
+    height: 9px;
+    border-left: 2px solid #c93030;
+    border-top: 2px solid #c93030;
+    border-radius: 0 0 0 3px;
+    transform: rotate(-28deg) skewX(-8deg);
+    background: #faf8f3;
+  }
+
+  @keyframes bubbleIn {
+    from { opacity: 0; transform: scale(0.6) rotate(-4deg); }
+    to   { opacity: 1; transform: scale(1) rotate(-1.5deg); }
+  }
+
+  .comment-loading {
+    font-family: 'Zen Kurenaido', cursive;
+    font-size: 0.82rem;
+    color: #c8a0a0;
+    margin: 7px 0 3px 12px;
+    animation: pulse 0.9s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+  .empty-hint {
+    padding: 28px 16px 28px 52px;
+    font-family: 'Klee One', cursive;
+    font-size: 0.82rem;
+    color: #c0b0a0;
+    line-height: 2.5;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent calc(2.5em - 1px),
+      #ddd5c5 calc(2.5em - 1px),
+      #ddd5c5 2.5em
+    );
+    background-size: 100% 2.5em;
+  }
+
+  /* 入力エリア */
+  .input-area {
+    padding: 13px 16px 16px 52px;
+    background: #f2ede3;
+    border-top: 1.5px solid #d4c9b8;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 68px;
+    font-family: 'Klee One', cursive;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #1e1810;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid #c8b89a;
+    resize: none;
+    outline: none;
+    line-height: 2;
+    padding: 2px 0;
+    caret-color: #5c4f44;
+  }
+
+  textarea::placeholder {
+    color: #c0b0a0;
+    font-size: 0.85rem;
+    font-weight: 400;
+  }
+
+  .submit-row {
+    margin-top: 9px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hint-text {
+    font-family: 'Klee One', cursive;
+    font-size: 0.62rem;
+    color: #b8a898;
+  }
+
+  .submit-btn-main {
+    font-family: 'Klee One', cursive;
+    font-size: 0.85rem;
+    color: #faf8f3;
+    background: #7a6858;
+    border: none;
+    border-radius: 20px;
+    padding: 7px 22px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: background 0.2s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .submit-btn-main:hover { background: #5c4f44; }
+  .submit-btn-main:active { transform: scale(0.97); }
+  .submit-btn-main:disabled { background: #c0b0a0; cursor: default; }
+
+  /* PWAインストール案内 */
+  .pwa-banner {
+    width: 100%;
+    max-width: 560px;
+    margin-top: 14px;
+    background: #ede8df;
+    border: 1px solid #c8b89a;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Klee One', cursive;
+    font-size: 0.72rem;
+    color: #7a6858;
+    line-height: 1.7;
+    display: none;
+  }
+  .pwa-banner.show { display: block; }
+  .pwa-banner strong { font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>ひとりごとノート</h1>
+
+<div class="notebook">
+  <div class="notebook-header">
+    <div class="header-left">
+      <span class="date-label">Date</span>
+      <input class="date-input" type="text" id="dateInput" placeholder="yyyy / mm / dd">
+    </div>
+  </div>
+
+  <div class="entries-area" id="entriesArea">
+    <div class="empty-hint" id="emptyHint">今日のことを書いてみてください。<br>ちゃんと読んでいます。</div>
+  </div>
+
+  <div class="input-area">
+    <textarea id="mainTextarea" placeholder="今日のひとりごと…" rows="3"></textarea>
+    <div class="submit-row">
+      <span class="hint-text">Ctrl+Enter でも送れます</span>
+      <button class="submit-btn-main" id="submitBtn" onclick="submitEntry()">書く</button>
+    </div>
+  </div>
+</div>
+
+<div class="pwa-banner" id="pwaBanner">
+  📌 <strong>ホーム画面に追加する方法（Android Chrome）</strong><br>
+  画面右上の ︙ メニュー → 「ホーム画面に追加」をタップしてください。<br>
+  アプリのように起動できます。
+</div>
+
+<script>
+const STORAGE_KEY = 'hitori_diary_entries';
+
+// 今日の日付
+(function() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth()+1).padStart(2,'0');
+  const d = String(now.getDate()).padStart(2,'0');
+  document.getElementById('dateInput').value = `${y} / ${m} / ${d}`;
+})();
+
+// Android判定でPWA案内を表示
+(function() {
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+  if (isAndroid && !isStandalone) {
+    document.getElementById('pwaBanner').classList.add('show');
+  }
+})();
+
+// データ読み込み
+let entries = [];
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) entries = JSON.parse(saved);
+} catch(e) { entries = []; }
+
+if (entries.length > 0) {
+  document.getElementById('emptyHint').remove();
+  entries.forEach(e => renderEntry(e.id, e.text, e.comment, e.time, false));
+}
+
+function saveEntries() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); } catch(e) {}
+}
+
+function formatTime(ts) {
+  const d = new Date(ts);
+  const mo = d.getMonth()+1;
+  const day = d.getDate();
+  const h = String(d.getHours()).padStart(2,'0');
+  const mi = String(d.getMinutes()).padStart(2,'0');
+  return `${mo}/${day}  ${h}:${mi}`;
+}
+
+function renderEntry(id, text, comment, ts, animate) {
+  const area = document.getElementById('entriesArea');
+
+  const block = document.createElement('div');
+  block.className = 'entry-block';
+  block.dataset.id = id;
+
+  // メタ行（時刻＋削除ボタン）
+  const meta = document.createElement('div');
+  meta.className = 'entry-meta';
+
+  const timeSpan = document.createElement('span');
+  timeSpan.textContent = ts ? formatTime(ts) : '';
+  meta.appendChild(timeSpan);
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'delete-btn';
+  delBtn.textContent = '消す';
+  delBtn.onclick = () => showDeleteConfirm(block, id);
+  meta.appendChild(delBtn);
+
+  block.appendChild(meta);
+
+  // 本文
+  const entryText = document.createElement('div');
+  entryText.className = 'entry-text';
+  entryText.textContent = text;
+  block.appendChild(entryText);
+
+  // コメント
+  if (comment) {
+    const bubble = document.createElement('div');
+    bubble.className = 'comment-bubble';
+    if (!animate) bubble.style.animation = 'none';
+    bubble.textContent = comment;
+    block.appendChild(bubble);
+  }
+
+  area.appendChild(block);
+  return block;
+}
+
+function showDeleteConfirm(block, id) {
+  // すでに確認UI があれば閉じる
+  const existing = block.querySelector('.delete-confirm');
+  if (existing) { existing.remove(); return; }
+
+  const confirm = document.createElement('div');
+  confirm.className = 'delete-confirm';
+
+  const msg = document.createElement('span');
+  msg.textContent = '削除しますか？';
+  confirm.appendChild(msg);
+
+  const noBtn = document.createElement('button');
+  noBtn.className = 'confirm-no';
+  noBtn.textContent = 'やめる';
+  noBtn.onclick = () => confirm.remove();
+  confirm.appendChild(noBtn);
+
+  const yesBtn = document.createElement('button');
+  yesBtn.className = 'confirm-yes';
+  yesBtn.textContent = '消す';
+  yesBtn.onclick = () => deleteEntry(block, id);
+  confirm.appendChild(yesBtn);
+
+  // 本文の直後に差し込む
+  const entryText = block.querySelector('.entry-text');
+  entryText.insertAdjacentElement('afterend', confirm);
+}
+
+function deleteEntry(block, id) {
+  entries = entries.filter(e => e.id !== id);
+  saveEntries();
+  block.style.transition = 'opacity 0.25s, transform 0.25s';
+  block.style.opacity = '0';
+  block.style.transform = 'translateX(-8px)';
+  setTimeout(() => {
+    block.remove();
+    if (document.querySelectorAll('.entry-block').length === 0) {
+      const area = document.getElementById('entriesArea');
+      area.innerHTML = '<div class="empty-hint" id="emptyHint">今日のことを書いてみてください。<br>ちゃんと読んでいます。</div>';
+    }
+  }, 260);
+}
+
+async function submitEntry() {
+  const textarea = document.getElementById('mainTextarea');
+  const text = textarea.value.trim();
+  if (!text) return;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+
+  const area = document.getElementById('entriesArea');
+  const hint = document.getElementById('emptyHint');
+  if (hint) hint.remove();
+
+  const ts = Date.now();
+  const id = String(ts) + Math.random().toString(36).slice(2,6);
+
+  const block = document.createElement('div');
+  block.className = 'entry-block';
+  block.dataset.id = id;
+
+  const meta = document.createElement('div');
+  meta.className = 'entry-meta';
+
+  const timeSpan = document.createElement('span');
+  timeSpan.textContent = formatTime(ts);
+  meta.appendChild(timeSpan);
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'delete-btn';
+  delBtn.textContent = '消す';
+  delBtn.onclick = () => showDeleteConfirm(block, id);
+  meta.appendChild(delBtn);
+
+  block.appendChild(meta);
+
+  const entryText = document.createElement('div');
+  entryText.className = 'entry-text';
+  entryText.textContent = text;
+  block.appendChild(entryText);
+
+  const loading = document.createElement('div');
+  loading.className = 'comment-loading';
+  loading.textContent = '…';
+  block.appendChild(loading);
+
+  area.appendChild(block);
+  textarea.value = '';
+  area.scrollTop = area.scrollHeight;
+
+  let comment = 'うん、うん';
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: `あなたは読み手の友人として、日記のページの余白に赤ペンで短いコメントを書き込む存在です。
+ルール：
+- 10文字以内の短い言葉で返す（長くても20文字まで）
+- 吹き出しに収まるコンパクトな言葉
+- 「あるある」「ドレマイ!!」「それな〜」「えらい！」のような自然な反応
+- 説教・アドバイスは不要。共感か、軽いツッコミか、そっと寄り添う言葉
+- 敬語なし。友達口調
+- 絵文字・記号は使わない
+- テキストのみ返す（前置き不要）`,
+        messages: [{ role: "user", content: text }]
+      })
+    });
+    const data = await response.json();
+    comment = data.content?.[0]?.text?.trim() || 'うん、うん';
+  } catch(e) {
+    comment = '読めなかった…';
+  }
+
+  loading.remove();
+  const bubble = document.createElement('div');
+  bubble.className = 'comment-bubble';
+  bubble.textContent = comment;
+  block.appendChild(bubble);
+
+  entries.push({ id, text, comment, time: ts });
+  saveEntries();
+
+  btn.disabled = false;
+  area.scrollTop = area.scrollHeight;
+}
+
+document.getElementById('mainTextarea').addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') submitEntry();
+});
+</script>
+</body>
+</html>
